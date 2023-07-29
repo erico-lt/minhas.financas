@@ -5,10 +5,12 @@ import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -23,8 +25,12 @@ public class Usuario implements Serializable{
     private String email;
     private String senha;
 
+    @Column(name = "data_cadastro")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy", timezone = "GMT")
-    private Instant data_cadastro; 
+    private Instant dataCadastro; 
+    
+    @OneToMany(mappedBy = "usuario")
+    private Lancamento lancamento;
 
     public Usuario() {        
     }     
@@ -34,7 +40,7 @@ public class Usuario implements Serializable{
         this.name = name;
         this.email = email;
         this.senha = senha;
-        this.data_cadastro = data_cadastro;
+        this.dataCadastro = data_cadastro;
     }
 
     public Long getId() {
@@ -70,11 +76,11 @@ public class Usuario implements Serializable{
     }
 
     public Instant getData_cadastro() {
-        return data_cadastro;
+        return dataCadastro;
     }
 
     public void setData_cadastro(Instant data_cadastro) {
-        this.data_cadastro = data_cadastro;
+        this.dataCadastro = data_cadastro;
     }
 
     @Override
