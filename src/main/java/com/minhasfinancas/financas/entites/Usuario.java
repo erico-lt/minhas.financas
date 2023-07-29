@@ -1,5 +1,6 @@
 package com.minhasfinancas.financas.entites;
 
+import java.io.Serializable;
 import java.time.Instant;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -12,8 +13,9 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "usuario", schema = "financas")
-public class Usuario {
-    
+public class Usuario implements Serializable{
+    private static final long serialVersionUID = 1L;    
+                                                        
     @Id @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private Long id;
 
