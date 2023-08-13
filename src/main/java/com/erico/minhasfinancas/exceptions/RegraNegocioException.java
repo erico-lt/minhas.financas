@@ -1,4 +1,4 @@
-package com.erico.minhasfinancas.services.exceptions;
+package com.erico.minhasfinancas.exceptions;
 
 public class RegraNegocioException  extends RuntimeException{
     
