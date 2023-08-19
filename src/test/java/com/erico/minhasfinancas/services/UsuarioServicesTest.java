@@ -2,6 +2,7 @@ package com.erico.minhasfinancas.services;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.never;
 
 import java.util.Optional;
 
@@ -52,6 +53,20 @@ public class UsuarioServicesTest {
             Assertions.assertThat(test.getSenha()).isEqualTo(usuario.getSenha());
 
         });
+    }
+
+    @Test
+    void deveRetornarUmaExcecaoQuandoValidarEmail() {
+        RegraNegocioException e = assertThrows(RegraNegocioException.class, () -> {
+
+            Mockito.doThrow(RegraNegocioException.class).when(usuarioServices).validarEmail(usuario.getEmail());
+
+            usuarioServices.salvarUsuario(usuario);
+
+            Mockito.verify(usuarioRepository, never()).save(usuario);
+        });
+
+        Assertions.assertThat(e.getMessage()).isNull();
     }
 
     @Test
