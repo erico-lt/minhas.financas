@@ -3,6 +3,8 @@ package com.erico.minhasfinancas.entites;
 import java.io.Serializable;
 import java.time.Instant;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,6 +39,7 @@ public class Usuario implements Serializable{
     private String senha;
 
     @Column(name = "data_cadastro")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy'T''Z'", timezone = "GMT")
     private Instant dataCadastro;                
 
 }

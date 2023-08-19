@@ -42,9 +42,18 @@ public class UsuarioServicesImpl implements UsuarioServices {
     @Transactional
     public Usuario salvarUsuario(Usuario usuario) {
 
-        validarEmail(usuario.getEmail());
+        if(usuario.getNome().equals(null)) {
+            throw new RegraNegocioException("Nome de usuario vazio revise seus dados");
+        }
 
-        return usuarioRepository.save(usuario);
+        try {
+
+            validarEmail(usuario.getEmail());
+            return usuarioRepository.save(usuario);
+
+        } catch (NullPointerException e) {
+            throw new RegraNegocioException(e.getMessage());
+        }      
     }
 
     @Override
