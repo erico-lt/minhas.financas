@@ -1,8 +1,8 @@
 package com.erico.minhasfinancas.services.impl;
 
+import java.time.Instant;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.erico.minhasfinancas.entites.Usuario;
@@ -15,8 +15,7 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class UsuarioServicesImpl implements UsuarioServices {
-
-    @Autowired
+   
     private UsuarioRepository usuarioRepository;
 
     public UsuarioServicesImpl(UsuarioRepository usuarioRepository) {
@@ -49,6 +48,7 @@ public class UsuarioServicesImpl implements UsuarioServices {
         try {
 
             validarEmail(usuario.getEmail());
+            usuario.setDataCadastro(Instant.now());
             return usuarioRepository.save(usuario);
 
         } catch (NullPointerException e) {

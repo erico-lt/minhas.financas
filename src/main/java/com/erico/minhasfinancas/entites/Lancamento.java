@@ -41,8 +41,7 @@ public class Lancamento implements Serializable {
     private Long id;
     private String descricao;
     private int mes;
-    private int ano;      
-
+    private int ano;  
     private Double valor;
 
     @Enumerated(value = EnumType.STRING)

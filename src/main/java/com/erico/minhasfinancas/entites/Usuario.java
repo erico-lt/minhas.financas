@@ -39,7 +39,7 @@ public class Usuario implements Serializable{
     private String senha;
 
     @Column(name = "data_cadastro")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy'T''Z'", timezone = "GMT")
-    private Instant dataCadastro;                
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy", timezone = "GMT")
+    private Instant dataCadastro;          
 
 }

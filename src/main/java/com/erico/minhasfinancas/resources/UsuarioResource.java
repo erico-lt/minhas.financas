@@ -11,7 +11,7 @@ import com.erico.minhasfinancas.entites.Usuario;
 import com.erico.minhasfinancas.services.impl.UsuarioServicesImpl;
 
 @RestController
-@RequestMapping(value = "/usuarios")
+@RequestMapping(value = "/api/usuarios")
 public class UsuarioResource {
     
     @Autowired
