@@ -1,5 +1,6 @@
 package com.erico.minhasfinancas.services.impl;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
@@ -10,6 +11,7 @@ import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 
 import com.erico.minhasfinancas.entites.Lancamento;
 import com.erico.minhasfinancas.enums.EnumStatus;
+import com.erico.minhasfinancas.exceptions.ErroAutenticacaoException;
 import com.erico.minhasfinancas.repositorys.LancamentoRepository;
 import com.erico.minhasfinancas.services.LancamentoServices;
 
@@ -22,14 +24,17 @@ public class LancamentoServicesImpl implements LancamentoServices{
 
     @Override
     @Transactional
-    public Lancamento salvar(Lancamento lancamento) {        
-        
+    public Lancamento salvar(Lancamento lancamento) { 
+        validar(lancamento);
+
+        lancamento.setStatus(EnumStatus.PENDENTE);
         return lancamentoRepository.save(lancamento); 
     }
 
     @Override
     @Transactional
     public Lancamento atualizar(Lancamento lancamento) {
+        validar(lancamento);
         
         Objects.requireNonNull(lancamento.getId());
         Lancamento lanc = lancamentoRepository.getReferenceById(lancamento.getId());
@@ -57,11 +62,40 @@ public class LancamentoServicesImpl implements LancamentoServices{
 
     @Override
     public void atualizarStatus(Lancamento lancamento, EnumStatus status) {
+        validar(lancamento);
         Objects.requireNonNull(lancamento.getId());
         lancamento.setStatus(status);
         
         atualizar(lancamento);
-    }
+    }    
+
+    @Override
+    public void validar(Lancamento lancamento) {
+
+        if(lancamento.getDescricao() == null || lancamento.getDescricao().trim().equals("")) {
+            throw new ErroAutenticacaoException("Desçricão vazia");
+        }
+
+        if(lancamento.getMes() < 1 || lancamento.getMes() > 12) {
+            throw new ErroAutenticacaoException("Mes do ano invalido");
+        }
+
+        if(lancamento.getAno() > Calendar.YEAR || Integer.toString(lancamento.getAno()).length() < 4) {
+            throw new ErroAutenticacaoException("Verifique o ano infomado");
+        }
+
+        if(lancamento.getValor() == null || lancamento.getValor() <= 0) {
+            throw new ErroAutenticacaoException("Informe um valor valido acima de 0");
+        }
+
+        if(lancamento.getUsuario() == null) {
+            throw new ErroAutenticacaoException("Usuario com informações incompletas");
+        }
+
+        if(lancamento.getTipo() == null) {
+            throw new ErroAutenticacaoException("Tipo de lancamento não informado");
+        } 
+    } 
 
     public void update(Lancamento atualizar, Lancamento auxiliar) {
 
@@ -71,6 +105,6 @@ public class LancamentoServicesImpl implements LancamentoServices{
         atualizar.setValor(auxiliar.getValor());
         atualizar.setTipo(auxiliar.getTipo());
         
-    } 
+    }
     
 }
