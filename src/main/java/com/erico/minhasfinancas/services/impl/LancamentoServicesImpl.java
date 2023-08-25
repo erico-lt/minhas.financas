@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.ExampleMatcher.StringMatcher;
+import org.springframework.stereotype.Service;
 
 import com.erico.minhasfinancas.entites.Lancamento;
 import com.erico.minhasfinancas.enums.EnumStatus;
@@ -17,6 +18,7 @@ import com.erico.minhasfinancas.services.LancamentoServices;
 
 import jakarta.transaction.Transactional;
 
+@Service
 public class LancamentoServicesImpl implements LancamentoServices{
 
     @Autowired
