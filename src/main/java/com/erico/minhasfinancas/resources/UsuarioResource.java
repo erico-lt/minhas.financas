@@ -2,6 +2,7 @@ package com.erico.minhasfinancas.resources;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +22,12 @@ public class UsuarioResource {
     public ResponseEntity<Usuario> salvarUsuario(@RequestBody Usuario usuario) {
         
         return ResponseEntity.ok().body(usuarioServicesImpl.salvarUsuario(usuario)); 
+    }
+
+    @GetMapping
+    public ResponseEntity<Usuario> autenticar(String email, String senha) {
+
+        return ResponseEntity.ok().body(usuarioServicesImpl.autenticar(email, senha));
     }
    
 } 

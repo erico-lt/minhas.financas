@@ -11,48 +11,64 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.erico.minhasfinancas.entites.Lancamento;
-import com.erico.minhasfinancas.enums.EnumStatus;
-import com.erico.minhasfinancas.services.impl.LancamentoServicesImpl;
+import com.erico.minhasfinancas.entites.Usuario;
+import com.erico.minhasfinancas.services.LancamentoServices;
+import com.erico.minhasfinancas.services.UsuarioServices;
 
 @RestController
 @RequestMapping(value = "/api/lancamentos")
 public class LancamentoResource {
-    
+
     @Autowired
-    LancamentoServicesImpl lancamentoServices;
+    LancamentoServices lancamentoServices;
+
+    @Autowired
+    UsuarioServices usuarioServices;
+
+    @GetMapping
+    public ResponseEntity<List<Lancamento>> buscar(
+            @RequestParam(value = "descricao", required = false) String descricao,
+            @RequestParam(value = "mes", required = false) int mes,
+            @RequestParam(value = "ano", required = false) int ano,
+            @RequestParam(value = "id_usuario", required = true) Long id) {
+
+                Lancamento lancamentoFiltro = new Lancamento();
+                lancamentoFiltro.setDescricao(descricao);
+                lancamentoFiltro.setMes(mes);
+                lancamentoFiltro.setAno(ano);
+                lancamentoFiltro.setUsuario(usuarioServices.obterPorId(id));
+                
+                return ResponseEntity.ok().body(lancamentoServices.buscar(lancamentoFiltro));
+    }
 
     @PostMapping
-    public ResponseEntity<Lancamento> salvar(@RequestBody Lancamento lancamento) {
+    public ResponseEntity<Lancamento> salvar(@RequestBody Lancamento lancamento, @RequestBody Usuario usuario) {
 
-        return ResponseEntity.ok().body(lancamentoServices.salvar(lancamento));
+        return ResponseEntity.ok().body(lancamentoServices.salvar(lancamento, usuario));
     }
 
-    @PutMapping
-    public ResponseEntity<Lancamento> atualizar(@RequestBody Lancamento lancamento) {
+    @PutMapping(value = "/{id}")
+    public ResponseEntity<Lancamento> atualizar(@PathVariable Long id, @RequestBody Lancamento lancamento) {
 
-        return ResponseEntity.ok().body(lancamentoServices.atualizar(lancamento));
+        return ResponseEntity.ok().body(lancamentoServices.atualizar(id, lancamento));
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void>  deletar(Lancamento lancamento) {
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
 
-        lancamentoServices.deletar(lancamento);
-        return ResponseEntity.noContent().build();
-    }    
-
-    @GetMapping
-    public ResponseEntity<List<Lancamento>> buscar(Lancamento lancamentoFiltro) {
-
-        return ResponseEntity.ok().body(lancamentoServices.buscar(lancamentoFiltro));
-    }
-
-    @GetMapping
-    public ResponseEntity<Void> atualizaStatus(@RequestBody Lancamento lancamento, EnumStatus status) {
-
-        lancamentoServices.atualizarStatus(lancamento, status);
+        lancamentoServices.deletar(id);
         return ResponseEntity.noContent().build();
     }
+
+    // @GetMapping
+    // public ResponseEntity<Void> atualizaStatus(@RequestBody Lancamento
+    // lancamento, EnumStatus status) {
+
+    // lancamentoServices.atualizarStatus(lancamento, status);
+    // return ResponseEntity.noContent().build();
+    // }
 }

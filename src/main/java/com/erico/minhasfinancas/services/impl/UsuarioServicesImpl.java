@@ -3,6 +3,7 @@ package com.erico.minhasfinancas.services.impl;
 import java.time.Instant;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.erico.minhasfinancas.entites.Usuario;
@@ -15,26 +16,28 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class UsuarioServicesImpl implements UsuarioServices {
-   
+    
+    @Autowired
     private UsuarioRepository usuarioRepository;
+    
+    @Override
+    public Usuario obterPorId(Long id) {
+        
+        Optional<Usuario> obj = usuarioRepository.findById(id);
 
-    public UsuarioServicesImpl(UsuarioRepository usuarioRepository) {
-        this.usuarioRepository = usuarioRepository;
+        return obj.orElseThrow(() -> new RegraNegocioException("Usuario nao encontrado com o id informado"));
     }
 
     @Override
     public Usuario autenticar(String email, String senha) {
         Optional<Usuario> user = usuarioRepository.findByEmail(email);
 
-        if (!user.isPresent()) {
-            throw new ErroAutenticacaoException("Usuario não encontrado, verifique o email");
-        }
-
+       
         if (!user.get().getSenha().equals(senha)) {
             throw new ErroAutenticacaoException("Senha incorreta");
         }
 
-        return user.get();
+        return user.orElseThrow(() -> new ErroAutenticacaoException("Usuario não encontrado"));
     }
 
     @Override

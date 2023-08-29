@@ -1,8 +1,6 @@
 package com.erico.minhasfinancas.services;
 
-
 import com.erico.minhasfinancas.entites.Usuario;
-
 
 public interface UsuarioServices {
     
@@ -11,5 +9,7 @@ public interface UsuarioServices {
     abstract Usuario salvarUsuario(Usuario usuario);
     
     abstract void validarEmail(String email);
+
+    abstract Usuario obterPorId(Long id);
 
 }
