@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.erico.minhasfinancas.dto.LancamentoDto;
 import com.erico.minhasfinancas.entites.Lancamento;
-import com.erico.minhasfinancas.entites.Usuario;
+import com.erico.minhasfinancas.enums.EnumStatus;
+import com.erico.minhasfinancas.enums.EnumTipo;
 import com.erico.minhasfinancas.services.LancamentoServices;
 import com.erico.minhasfinancas.services.UsuarioServices;
 
@@ -45,17 +47,24 @@ public class LancamentoResource {
                 return ResponseEntity.ok().body(lancamentoServices.buscar(lancamentoFiltro));
     }
 
-    @PostMapping
-    public ResponseEntity<Lancamento> salvar(@RequestBody Lancamento lancamento, @RequestBody Usuario usuario) {
 
-        return ResponseEntity.ok().body(lancamentoServices.salvar(lancamento, usuario));
+    //Metodo para salvar Lancamento
+    @PostMapping
+    public ResponseEntity<Lancamento> salvar(@RequestBody LancamentoDto dto) {
+
+        Lancamento lancamento = new Lancamento();
+        converterLancamentoDtoParaLancamento(lancamento, dto);
+        return ResponseEntity.ok().body(lancamentoServices.salvar(lancamento));
     }
 
+
+    //Metodo para atualizar Lancamento
     @PutMapping(value = "/{id}")
     public ResponseEntity<Lancamento> atualizar(@PathVariable Long id, @RequestBody Lancamento lancamento) {
 
         return ResponseEntity.ok().body(lancamentoServices.atualizar(id, lancamento));
     }
+
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
@@ -71,4 +80,15 @@ public class LancamentoResource {
     // lancamentoServices.atualizarStatus(lancamento, status);
     // return ResponseEntity.noContent().build();
     // }
+
+    public void converterLancamentoDtoParaLancamento(Lancamento lancamento, LancamentoDto dto) {
+        
+        lancamento.setDescricao(dto.getDescricao());     
+        lancamento.setMes(dto.getMes());
+        lancamento.setAno(dto.getAno());
+        lancamento.setValor(dto.getValor());
+        lancamento.setTipo(EnumTipo.valueOf(dto.getTipo()));   
+        lancamento.setStatus(EnumStatus.valueOf(dto.getStatus()));
+        lancamento.setUsuario(usuarioServices.obterPorId(dto.getUsuario()));
+    }
 }

@@ -1,6 +1,5 @@
 package com.erico.minhasfinancas.services.impl;
 
-import java.time.Instant;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,8 +49,7 @@ public class UsuarioServicesImpl implements UsuarioServices {
 
         try {
 
-            validarEmail(usuario.getEmail());
-            usuario.setDataCadastro(Instant.now());
+            validarEmail(usuario.getEmail());            
             return usuarioRepository.save(usuario);
 
         } catch (NullPointerException e) {

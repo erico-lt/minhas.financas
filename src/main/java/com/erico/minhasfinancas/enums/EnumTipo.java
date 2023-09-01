@@ -16,7 +16,7 @@ public enum EnumTipo {
         return this.code;
     }
 
-    public EnumTipo valueOf(int code) {
+    public static EnumTipo valueOf(int code) {
 
         for(EnumTipo tipo: EnumTipo.values()) {
             if(tipo.getCode() == code) {

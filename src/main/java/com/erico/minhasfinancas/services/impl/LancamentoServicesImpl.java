@@ -1,6 +1,7 @@
 package com.erico.minhasfinancas.services.impl;
 
-import java.util.Calendar;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,6 @@ import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.stereotype.Service;
 
 import com.erico.minhasfinancas.entites.Lancamento;
-import com.erico.minhasfinancas.entites.Usuario;
 import com.erico.minhasfinancas.enums.EnumStatus;
 import com.erico.minhasfinancas.exceptions.ErroAutenticacaoException;
 import com.erico.minhasfinancas.repositorys.LancamentoRepository;
@@ -26,10 +26,9 @@ public class LancamentoServicesImpl implements LancamentoServices{
 
     @Override
     @Transactional
-    public Lancamento salvar(Lancamento lancamento, Usuario usuario) { 
+    public Lancamento salvar(Lancamento lancamento) { 
         validar(lancamento);
-
-        lancamento.setUsuario(usuario);
+        lancamento.setData_cadastro(Instant.now());
         lancamento.setStatus(EnumStatus.PENDENTE);
         return lancamentoRepository.save(lancamento); 
     }
@@ -72,7 +71,7 @@ public class LancamentoServicesImpl implements LancamentoServices{
 
     @Override
     public void validar(Lancamento lancamento) {
-
+        LocalDate date = LocalDate.now();
         if(lancamento.getDescricao() == null || lancamento.getDescricao().trim().equals("")) {
             throw new ErroAutenticacaoException("Desçricão vazia");
         }
@@ -81,7 +80,7 @@ public class LancamentoServicesImpl implements LancamentoServices{
             throw new ErroAutenticacaoException("Mes do ano invalido");
         }
 
-        if(lancamento.getAno() > Calendar.YEAR || Integer.toString(lancamento.getAno()).length() < 4) {
+        if(lancamento.getAno() > date.getYear() || Integer.toString(lancamento.getAno()).length() < 4) {
             throw new ErroAutenticacaoException("Verifique o ano infomado");
         }
 

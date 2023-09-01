@@ -32,7 +32,7 @@ public class TestConfig implements CommandLineRunner {
     public void run(String... args) throws Exception {
         
         
-        Usuario user = new Usuario(null, "Erico","email@email.com", "2324", Instant.now(), null);
+        Usuario user = new Usuario(null, "Erico","email@email.com", "2324", null);
         usuarioRepository.save(user);  
 
         Lancamento lan = new Lancamento(null, "fim de mes", 03, 2023, 1.500, EnumTipo.RECEITA, EnumStatus.PENDENTE, user, Instant.now());

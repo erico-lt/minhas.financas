@@ -16,7 +16,7 @@ public enum EnumStatus {
         return this.code;
     }
 
-    public EnumStatus valueOf(int code) {
+    public static EnumStatus valueOf(int code) {
         for(EnumStatus status: EnumStatus.values()) {
             if(status.getCode() == code) {
                 return status;

@@ -3,13 +3,10 @@ package com.erico.minhasfinancas.entites;
 import java.io.Serializable;
 import java.time.Instant;
 
-
-import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
-
 import com.erico.minhasfinancas.enums.EnumStatus;
 import com.erico.minhasfinancas.enums.EnumTipo;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
-import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -52,8 +49,8 @@ public class Lancamento implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "id_usuario")
-    private Usuario usuario;
+    private Usuario usuario;    
     
-    @Convert(converter = Jsr310JpaConverters.InstantConverter.class)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy", timezone = "GMT")
     private Instant data_cadastro;       
 }

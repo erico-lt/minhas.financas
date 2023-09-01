@@ -1,14 +1,11 @@
 package com.erico.minhasfinancas.entites; 
 
 import java.io.Serializable;
-import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -49,12 +46,7 @@ public class Usuario implements Serializable{
     private String email;
 
     @NonNull
-    private String senha;
-
-    @NonNull
-    @Column(name = "data_cadastro")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy", timezone = "GMT")
-    private Instant dataCadastro;       
+    private String senha;     
    
     @OneToMany(mappedBy = "usuario")
     @Builder.Default
