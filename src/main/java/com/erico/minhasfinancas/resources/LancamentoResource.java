@@ -60,9 +60,9 @@ public class LancamentoResource {
 
     //Metodo para atualizar Lancamento
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Lancamento> atualizar(@PathVariable Long id, @RequestBody Lancamento lancamento) {
-
-        return ResponseEntity.ok().body(lancamentoServices.atualizar(id, lancamento));
+    public ResponseEntity<Lancamento> atualizar(@PathVariable Long id, @RequestBody LancamentoDto dto) {
+       
+        return ResponseEntity.ok().body(lancamentoServices.atualizar(id, dto));
     }
 
 
@@ -91,4 +91,5 @@ public class LancamentoResource {
         lancamento.setStatus(EnumStatus.valueOf(dto.getStatus()));
         lancamento.setUsuario(usuarioServices.obterPorId(dto.getUsuario()));
     }
+    
 }

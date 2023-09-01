@@ -10,8 +10,10 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.stereotype.Service;
 
+import com.erico.minhasfinancas.dto.LancamentoDto;
 import com.erico.minhasfinancas.entites.Lancamento;
 import com.erico.minhasfinancas.enums.EnumStatus;
+import com.erico.minhasfinancas.enums.EnumTipo;
 import com.erico.minhasfinancas.exceptions.ErroAutenticacaoException;
 import com.erico.minhasfinancas.repositorys.LancamentoRepository;
 import com.erico.minhasfinancas.services.LancamentoServices;
@@ -35,12 +37,12 @@ public class LancamentoServicesImpl implements LancamentoServices{
 
     @Override
     @Transactional
-    public Lancamento atualizar(Long id, Lancamento lancamento) {
-        validar(lancamento);        
+    public Lancamento atualizar(Long id, LancamentoDto dto) {                
        
         Lancamento lanc = lancamentoRepository.getReferenceById(id);
 
-        update(lanc, lancamento);
+        update(lanc, dto);
+        validar(lanc);
         return lancamentoRepository.save(lanc);
     }
 
@@ -97,14 +99,13 @@ public class LancamentoServicesImpl implements LancamentoServices{
         } 
     } 
 
-    public void update(Lancamento atualizar, Lancamento auxiliar) {
+    public void update(Lancamento atualizar, LancamentoDto dto) {
 
-        atualizar.setDescricao(auxiliar.getDescricao());
-        atualizar.setMes(auxiliar.getMes());
-        atualizar.setAno(auxiliar.getAno());
-        atualizar.setValor(auxiliar.getValor());
-        atualizar.setTipo(auxiliar.getTipo());
-        
+        atualizar.setDescricao(dto.getDescricao());
+        atualizar.setMes(dto.getMes());
+        atualizar.setAno(dto.getAno());
+        atualizar.setValor(dto.getValor());
+        atualizar.setTipo(EnumTipo.valueOf(dto.getTipo()));        
     }
     
 }
