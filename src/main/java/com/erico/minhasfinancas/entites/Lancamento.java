@@ -37,8 +37,8 @@ public class Lancamento implements Serializable {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String descricao;
-    private int mes;
-    private int ano;  
+    private Integer mes;
+    private Integer ano;  
     private Double valor;
 
     @Enumerated(value = EnumType.STRING)

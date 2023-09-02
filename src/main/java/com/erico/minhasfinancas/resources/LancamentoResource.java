@@ -34,8 +34,9 @@ public class LancamentoResource {
     @GetMapping
     public ResponseEntity<List<Lancamento>> buscar(
             @RequestParam(value = "descricao", required = false) String descricao,
-            @RequestParam(value = "mes", required = false) int mes,
-            @RequestParam(value = "ano", required = false) int ano,
+            @RequestParam(value = "mes", required = false) Integer mes,
+            @RequestParam(value = "ano", required = false) Integer ano,
+            @RequestParam(value = "tipo", required = false) EnumTipo tipo,
             @RequestParam(value = "id_usuario", required = true) Long id) {
 
                 Lancamento lancamentoFiltro = new Lancamento();
