@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.erico.minhasfinancas.dto.LancamentoDto;
+import com.erico.minhasfinancas.dto.EnumStatusDTO;
+import com.erico.minhasfinancas.dto.LancamentoDTO;
 import com.erico.minhasfinancas.entites.Lancamento;
 import com.erico.minhasfinancas.enums.EnumStatus;
 import com.erico.minhasfinancas.enums.EnumTipo;
@@ -39,33 +40,30 @@ public class LancamentoResource {
             @RequestParam(value = "tipo", required = false) EnumTipo tipo,
             @RequestParam(value = "id_usuario", required = true) Long id) {
 
-                Lancamento lancamentoFiltro = new Lancamento();
-                lancamentoFiltro.setDescricao(descricao);
-                lancamentoFiltro.setMes(mes);
-                lancamentoFiltro.setAno(ano);
-                lancamentoFiltro.setUsuario(usuarioServices.obterPorId(id));
-                
-                return ResponseEntity.ok().body(lancamentoServices.buscar(lancamentoFiltro));
+        Lancamento lancamentoFiltro = new Lancamento();
+        lancamentoFiltro.setDescricao(descricao);
+        lancamentoFiltro.setMes(mes);
+        lancamentoFiltro.setAno(ano);
+        lancamentoFiltro.setUsuario(usuarioServices.obterPorId(id));
+
+        return ResponseEntity.ok().body(lancamentoServices.buscar(lancamentoFiltro));
     }
 
-
-    //Metodo para salvar Lancamento
+    // Metodo para salvar Lancamento
     @PostMapping
-    public ResponseEntity<Lancamento> salvar(@RequestBody LancamentoDto dto) {
+    public ResponseEntity<Lancamento> salvar(@RequestBody LancamentoDTO dto) {
 
         Lancamento lancamento = new Lancamento();
         converterLancamentoDtoParaLancamento(lancamento, dto);
         return ResponseEntity.ok().body(lancamentoServices.salvar(lancamento));
     }
 
-
-    //Metodo para atualizar Lancamento
+    // Metodo para atualizar Lancamento
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Lancamento> atualizar(@PathVariable Long id, @RequestBody LancamentoDto dto) {
-       
-        return ResponseEntity.ok().body(lancamentoServices.atualizar(id, dto));
-    }
+    public ResponseEntity<Lancamento> atualizar(@PathVariable Long id, @RequestBody Lancamento lancamento) {
 
+        return ResponseEntity.ok().body(lancamentoServices.atualizar(lancamento));
+    }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
@@ -74,23 +72,23 @@ public class LancamentoResource {
         return ResponseEntity.noContent().build();
     }
 
-    // @GetMapping
-    // public ResponseEntity<Void> atualizaStatus(@RequestBody Lancamento
-    // lancamento, EnumStatus status) {
+    @PutMapping("/{id}/atualizar-status")
+    public ResponseEntity<Lancamento> atualizaStatus(@PathVariable Long id, @RequestBody EnumStatusDTO dto) {
 
-    // lancamentoServices.atualizarStatus(lancamento, status);
-    // return ResponseEntity.noContent().build();
-    // }
+        Lancamento lanc = lancamentoServices.obterPorId(id);
+        lancamentoServices.atualizarStatus(lanc, EnumStatus.valueOf(dto.getStatus()));
+        return ResponseEntity.ok().body(lanc);
+    }
 
-    public void converterLancamentoDtoParaLancamento(Lancamento lancamento, LancamentoDto dto) {
-        
-        lancamento.setDescricao(dto.getDescricao());     
+    public void converterLancamentoDtoParaLancamento(Lancamento lancamento, LancamentoDTO dto) {
+
+        lancamento.setDescricao(dto.getDescricao());
         lancamento.setMes(dto.getMes());
         lancamento.setAno(dto.getAno());
         lancamento.setValor(dto.getValor());
-        lancamento.setTipo(EnumTipo.valueOf(dto.getTipo()));   
+        lancamento.setTipo(EnumTipo.valueOf(dto.getTipo()));
         lancamento.setStatus(EnumStatus.valueOf(dto.getStatus()));
         lancamento.setUsuario(usuarioServices.obterPorId(dto.getUsuario()));
     }
-    
+
 }

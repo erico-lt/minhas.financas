@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Builder
 @Data
-public class LancamentoDto {
+public class LancamentoDTO {
     
     private String descricao;
     private int mes;

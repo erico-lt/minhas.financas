@@ -3,6 +3,8 @@ package com.erico.minhasfinancas.services.impl;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -10,11 +12,10 @@ import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.ExampleMatcher.StringMatcher;
 import org.springframework.stereotype.Service;
 
-import com.erico.minhasfinancas.dto.LancamentoDto;
 import com.erico.minhasfinancas.entites.Lancamento;
 import com.erico.minhasfinancas.enums.EnumStatus;
-import com.erico.minhasfinancas.enums.EnumTipo;
 import com.erico.minhasfinancas.exceptions.ErroAutenticacaoException;
+import com.erico.minhasfinancas.exceptions.RegraNegocioException;
 import com.erico.minhasfinancas.repositorys.LancamentoRepository;
 import com.erico.minhasfinancas.services.LancamentoServices;
 
@@ -37,13 +38,10 @@ public class LancamentoServicesImpl implements LancamentoServices{
 
     @Override
     @Transactional
-    public Lancamento atualizar(Long id, LancamentoDto dto) {                
-       
-        Lancamento lanc = lancamentoRepository.getReferenceById(id);
-
-        update(lanc, dto);
-        validar(lanc);
-        return lancamentoRepository.save(lanc);
+    public Lancamento atualizar(Lancamento lancamento) {         
+        
+        validar(lancamento);
+        return lancamentoRepository.save(lancamento);
     }
 
     @Override
@@ -63,14 +61,13 @@ public class LancamentoServicesImpl implements LancamentoServices{
         return lancamentoRepository.findAll(example);
     }
 
-    // @Override
-    // public void atualizarStatus(Lancamento lancamento, EnumStatus status) {
-    //     validar(lancamento);
-    //     Objects.requireNonNull(lancamento.getId());
-    //     lancamento.setStatus(status);
+    @Override
+    public Lancamento atualizarStatus(Lancamento lancamento, EnumStatus status) {
         
-    //     atualizar(lancamento.getId(), lancamento);
-    // }    
+        Objects.requireNonNull(lancamento.getId());               
+        lancamento.setStatus(status);   
+        return lancamentoRepository.save(lancamento);     
+    }    
 
     @Override
     public void validar(Lancamento lancamento) {
@@ -98,15 +95,14 @@ public class LancamentoServicesImpl implements LancamentoServices{
         if(lancamento.getTipo() == null) {
             throw new ErroAutenticacaoException("Tipo de lancamento não informado");
         } 
-    } 
-
-    public void update(Lancamento atualizar, LancamentoDto dto) {
-
-        atualizar.setDescricao(dto.getDescricao());
-        atualizar.setMes(dto.getMes());
-        atualizar.setAno(dto.getAno());
-        atualizar.setValor(dto.getValor());
-        atualizar.setTipo(EnumTipo.valueOf(dto.getTipo()));        
     }
-    
+
+    @Override
+    public Lancamento obterPorId(Long id) {
+        
+        Optional<Lancamento> obj = lancamentoRepository.findById(id);
+        
+        return obj.orElseThrow(() -> new RegraNegocioException("Usuario nao encontrado"));
+    }
+
 }
