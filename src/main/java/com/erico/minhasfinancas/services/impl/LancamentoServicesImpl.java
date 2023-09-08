@@ -1,5 +1,6 @@
 package com.erico.minhasfinancas.services.impl;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import com.erico.minhasfinancas.entites.Lancamento;
 import com.erico.minhasfinancas.enums.EnumStatus;
+import com.erico.minhasfinancas.enums.EnumTipo;
 import com.erico.minhasfinancas.exceptions.ErroAutenticacaoException;
 import com.erico.minhasfinancas.exceptions.RegraNegocioException;
 import com.erico.minhasfinancas.repositorys.LancamentoRepository;
@@ -84,7 +86,7 @@ public class LancamentoServicesImpl implements LancamentoServices{
             throw new ErroAutenticacaoException("Verifique o ano infomado");
         }
 
-        if(lancamento.getValor() == null || lancamento.getValor() <= 0) {
+        if(lancamento.getValor() == null || lancamento.getValor().compareTo(BigDecimal.ZERO) < 1) {
             throw new ErroAutenticacaoException("Informe um valor valido acima de 0");
         }
 
@@ -103,6 +105,24 @@ public class LancamentoServicesImpl implements LancamentoServices{
         Optional<Lancamento> obj = lancamentoRepository.findById(id);
         
         return obj.orElseThrow(() -> new RegraNegocioException("Usuario nao encontrado"));
+    }
+
+    @Override
+    @Transactional
+    public BigDecimal obterSaldoPorUsuario(Long id) {
+
+        BigDecimal despesa = lancamentoRepository.oberSaldoPorLancamentoEUsuario(id, EnumTipo.DESPESA);
+        BigDecimal receita =  lancamentoRepository.oberSaldoPorLancamentoEUsuario(id, EnumTipo.RECEITA);
+
+        if(despesa == null){
+            despesa = BigDecimal.ZERO;
+        }
+        
+        if(receita == null) {
+            receita = BigDecimal.ZERO;
+        }
+
+        return receita.subtract(despesa);
     }
 
 }

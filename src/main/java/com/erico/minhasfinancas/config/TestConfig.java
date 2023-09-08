@@ -1,6 +1,7 @@
 package com.erico.minhasfinancas.config;
 
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +36,7 @@ public class TestConfig implements CommandLineRunner {
         Usuario user = new Usuario(null, "Erico","email@email.com", "2324", null);
         usuarioRepository.save(user);  
 
-        Lancamento lan = new Lancamento(null, "fim de mes", 03, 2023, 1.500, EnumTipo.RECEITA, EnumStatus.PENDENTE, user, Instant.now());
+        Lancamento lan = new Lancamento(null, "fim de mes", 03, 2023, BigDecimal.valueOf(1.500), EnumTipo.RECEITA, EnumStatus.PENDENTE, user, Instant.now());
 
         lancamentoRepository.save(lan);      
     }

@@ -31,30 +31,36 @@ public class UsuarioServicesImpl implements UsuarioServices {
     public Usuario autenticar(String email, String senha) {
         Optional<Usuario> user = usuarioRepository.findByEmail(email);
 
+        if(!user.isPresent()) {
+            throw new ErroAutenticacaoException("Usuario não encontrado");
+        }
+
+        if(!user.get().getEmail().equals(email)) {
+            throw new ErroAutenticacaoException("O email informado esta incorreto");
+        }
        
         if (!user.get().getSenha().equals(senha)) {
             throw new ErroAutenticacaoException("Senha incorreta");
         }
 
-        return user.orElseThrow(() -> new ErroAutenticacaoException("Usuario não encontrado"));
+        return user.get();
     }
 
     @Override
     @Transactional
     public Usuario salvarUsuario(Usuario usuario) {
 
-        if(usuario.getNome().equals(null)) {
-            throw new RegraNegocioException("Nome de usuario vazio revise seus dados");
+        if(usuario.getNome().equals(null) || usuario.getNome().strip().equals("")) {
+            throw new RegraNegocioException("Nome de usuario vazio, por favor adicione um nome");
         }
 
         try {
 
             validarEmail(usuario.getEmail());            
             return usuarioRepository.save(usuario);
-
-        } catch (NullPointerException e) {
+        } catch (RegraNegocioException e) {
             throw new RegraNegocioException(e.getMessage());
-        }      
+        }         
     }
 
     @Override

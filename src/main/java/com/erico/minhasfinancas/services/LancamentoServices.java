@@ -1,5 +1,6 @@
 package com.erico.minhasfinancas.services;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import com.erico.minhasfinancas.entites.Lancamento;
@@ -20,4 +21,6 @@ public interface LancamentoServices {
     abstract void validar(Lancamento lancamento);    
 
     abstract Lancamento obterPorId(Long id);
+
+    abstract BigDecimal obterSaldoPorUsuario(Long id);
 }

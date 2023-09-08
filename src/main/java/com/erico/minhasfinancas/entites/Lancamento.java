@@ -1,6 +1,7 @@
 package com.erico.minhasfinancas.entites;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.Instant;
 
 import com.erico.minhasfinancas.enums.EnumStatus;
@@ -39,7 +40,7 @@ public class Lancamento implements Serializable {
     private String descricao;
     private Integer mes;
     private Integer ano;  
-    private Double valor;
+    private BigDecimal valor;
 
     @Enumerated(value = EnumType.STRING)
     private EnumTipo tipo;
