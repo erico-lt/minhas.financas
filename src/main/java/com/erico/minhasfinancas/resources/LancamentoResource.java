@@ -32,23 +32,6 @@ public class LancamentoResource {
     @Autowired
     UsuarioServices usuarioServices;
 
-    @GetMapping
-    public ResponseEntity<List<Lancamento>> buscar(
-            @RequestParam(value = "descricao", required = false) String descricao,
-            @RequestParam(value = "mes", required = false) Integer mes,
-            @RequestParam(value = "ano", required = false) Integer ano,
-            @RequestParam(value = "tipo", required = false) EnumTipo tipo,
-            @RequestParam(value = "id_usuario", required = true) Long id) {
-
-        Lancamento lancamentoFiltro = new Lancamento();
-        lancamentoFiltro.setDescricao(descricao);
-        lancamentoFiltro.setMes(mes);
-        lancamentoFiltro.setAno(ano);
-        lancamentoFiltro.setUsuario(usuarioServices.obterPorId(id));
-
-        return ResponseEntity.ok().body(lancamentoServices.buscar(lancamentoFiltro));
-    }
-
     // Metodo para salvar Lancamento
     @PostMapping
     public ResponseEntity<Lancamento> salvar(@RequestBody LancamentoDTO dto) {
@@ -62,15 +45,34 @@ public class LancamentoResource {
     @PutMapping(value = "/{id}")
     public ResponseEntity<Lancamento> atualizar(@PathVariable Long id, @RequestBody Lancamento lancamento) {
 
+        lancamento.setId(id);
         return ResponseEntity.ok().body(lancamentoServices.atualizar(lancamento));
     }
 
+    
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
 
         lancamentoServices.deletar(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping
+    public ResponseEntity<List<Lancamento>> buscar(
+            @RequestParam(value = "descricao", required = false) String descricao,
+            @RequestParam(value = "mes", required = false) Integer mes,
+            @RequestParam(value = "ano", required = false) Integer ano,
+            @RequestParam(value = "tipo", required = false) EnumTipo tipo,
+            @RequestParam(value = "id_usuario", required = true) Long idUsuario) {
+
+        Lancamento lancamentoFiltro = new Lancamento();
+        lancamentoFiltro.setDescricao(descricao);
+        lancamentoFiltro.setMes(mes);
+        lancamentoFiltro.setAno(ano);
+        lancamentoFiltro.setUsuario(usuarioServices.obterPorId(idUsuario));
+
+        return ResponseEntity.ok().body(lancamentoServices.buscar(lancamentoFiltro));
+    }     
 
     @PutMapping("/{id}/atualizar-status")
     public ResponseEntity<Lancamento> atualizaStatus(@PathVariable Long id, @RequestBody EnumStatusDTO dto) {

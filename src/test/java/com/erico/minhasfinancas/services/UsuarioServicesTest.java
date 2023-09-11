@@ -35,7 +35,7 @@ public class UsuarioServicesTest {
 
     @BeforeEach
     void setup() {
-        usuario = Usuario.builder().email("email@email.com").senha("senha").id(1l).build();
+        usuario = Usuario.builder().nome("Érico").email("email@email.com").senha("senha").id(1l).build();
     }
 
     @Test
@@ -45,12 +45,13 @@ public class UsuarioServicesTest {
 
             Mockito.when(usuarioRepository.save(Mockito.any(Usuario.class))).thenReturn(usuario);
 
-            Usuario test = usuarioServices.salvarUsuario(new Usuario());
+            Usuario testUser = usuarioServices.salvarUsuario(usuario);
 
-            Assertions.assertThat(test).isNotNull();
-            Assertions.assertThat(test.getId()).isEqualTo(usuario.getId());
-            Assertions.assertThat(test.getEmail()).isEqualTo(usuario.getEmail());
-            Assertions.assertThat(test.getSenha()).isEqualTo(usuario.getSenha());
+      
+            Assertions.assertThat(testUser).isNotNull();
+            Assertions.assertThat(testUser.getId()).isEqualTo(usuario.getId());
+            Assertions.assertThat(testUser.getEmail()).isEqualTo(usuario.getEmail());
+            Assertions.assertThat(testUser.getSenha()).isEqualTo(usuario.getSenha());
 
         });
     }
@@ -87,9 +88,10 @@ public class UsuarioServicesTest {
             Mockito.when(usuarioRepository.findByEmail(usuario.getEmail())).thenReturn(Optional.of(usuario));
 
             usuarioServices.autenticar("2email@email.com", usuario.getSenha());
+        
         });
 
-        Assertions.assertThat(e.getMessage()).isEqualTo("Usuario não encontrado, verifique o email");
+        Assertions.assertThat(e.getMessage()).isEqualTo("Usuario nao encontrado com email informado esta incorreto");
     }
 
     @Test

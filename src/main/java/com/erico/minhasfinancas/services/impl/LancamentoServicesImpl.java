@@ -32,24 +32,38 @@ public class LancamentoServicesImpl implements LancamentoServices{
     @Override
     @Transactional
     public Lancamento salvar(Lancamento lancamento) { 
+
         validar(lancamento);
-        lancamento.setData_cadastro(Instant.now());
-        lancamento.setStatus(EnumStatus.PENDENTE);
+        if(lancamento.getData_cadastro() == null) {
+            lancamento.setData_cadastro(Instant.now());
+        }
+        
+        if(lancamento.getStatus() == null) {
+            lancamento.setStatus(EnumStatus.PENDENTE);
+        }
+        
         return lancamentoRepository.save(lancamento); 
     }
 
     @Override
     @Transactional
-    public Lancamento atualizar(Lancamento lancamento) {         
-        
+    public Lancamento atualizar(Lancamento lancamento) { 
+
         validar(lancamento);
-        return lancamentoRepository.save(lancamento);
+        if(lancamentoRepository.existsById(lancamento.getId())) {
+            return lancamentoRepository.save(lancamento);
+        }else {
+            throw new RegraNegocioException("Este lancamento não existe, revise os dados passados");
+        }         
     }
 
     @Override
     @Transactional
     public void deletar(Long id) {
         
+        if(!lancamentoRepository.existsById(id)) {
+            throw new RegraNegocioException("Lancamento nao encontrado");
+        }
         lancamentoRepository.deleteById(id);
     }
 
@@ -104,7 +118,7 @@ public class LancamentoServicesImpl implements LancamentoServices{
         
         Optional<Lancamento> obj = lancamentoRepository.findById(id);
         
-        return obj.orElseThrow(() -> new RegraNegocioException("Usuario nao encontrado"));
+        return obj.orElseThrow(() -> new RegraNegocioException("Lancamento nao encontrado"));
     }
 
     @Override

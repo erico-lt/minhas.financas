@@ -15,13 +15,13 @@ import jakarta.transaction.Transactional;
 
 @Service
 public class UsuarioServicesImpl implements UsuarioServices {
-    
+
     @Autowired
     private UsuarioRepository usuarioRepository;
-    
+
     @Override
     public Usuario obterPorId(Long id) {
-        
+
         Optional<Usuario> obj = usuarioRepository.findById(id);
 
         return obj.orElseThrow(() -> new RegraNegocioException("Usuario nao encontrado com o id informado"));
@@ -31,14 +31,10 @@ public class UsuarioServicesImpl implements UsuarioServices {
     public Usuario autenticar(String email, String senha) {
         Optional<Usuario> user = usuarioRepository.findByEmail(email);
 
-        if(!user.isPresent()) {
-            throw new ErroAutenticacaoException("Usuario não encontrado");
+        if (!user.isPresent()) {
+            throw new ErroAutenticacaoException("Usuario nao encontrado com email informado esta incorreto");
         }
 
-        if(!user.get().getEmail().equals(email)) {
-            throw new ErroAutenticacaoException("O email informado esta incorreto");
-        }
-       
         if (!user.get().getSenha().equals(senha)) {
             throw new ErroAutenticacaoException("Senha incorreta");
         }
@@ -50,17 +46,17 @@ public class UsuarioServicesImpl implements UsuarioServices {
     @Transactional
     public Usuario salvarUsuario(Usuario usuario) {
 
-        if(usuario.getNome().equals(null) || usuario.getNome().strip().equals("")) {
+        if (usuario.getNome().equals(null) || usuario.getNome().strip().equals("")) {
             throw new RegraNegocioException("Nome de usuario vazio, por favor adicione um nome");
         }
 
         try {
 
-            validarEmail(usuario.getEmail());            
+            validarEmail(usuario.getEmail());
             return usuarioRepository.save(usuario);
         } catch (RegraNegocioException e) {
             throw new RegraNegocioException(e.getMessage());
-        }         
+        }
     }
 
     @Override

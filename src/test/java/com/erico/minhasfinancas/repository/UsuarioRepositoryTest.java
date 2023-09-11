@@ -4,6 +4,7 @@ package com.erico.minhasfinancas.repository;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -27,10 +28,15 @@ public class UsuarioRepositoryTest {
 	@Autowired
 	TestEntityManager testEntityManager;
 
+	Usuario usuario;
+
+	@BeforeEach
+	void creatUser() {
+		usuario = Usuario.builder().nome("Erico").email("erico.blp@gmail.com").senha("12343").build();
+	}
+
 	@Test
-	void validarSeEmailExisteNoBanco() {
-		Usuario usuario = criarUsuario();
-		
+	void validarSeEmailExisteNoBanco() {		
 		testEntityManager.persist(usuario);
 		boolean exist = usuarioRepository.existsByEmail("erico.blp@gmail.com");		
 
@@ -46,18 +52,16 @@ public class UsuarioRepositoryTest {
 	}  
 	
 	@Test
-	void deveExistirUmUsuarioNoBancoDeDados() {
-		
-		Usuario usuario = criarUsuario();
+	void deveExistirUmUsuarioNoBancoDeDados() {		
 		usuarioRepository.save(usuario);		
 
 		Assertions.assertThat(usuario.getId()).isNotNull();
 	}
 
 	@Test
-	void deveBuscarUsuarioPomOEmailTestado() {
-		
-		Usuario usuario = criarUsuario();
+	void deveBuscarUsuarioPomOEmailTestado() {	
+
+
 		testEntityManager.persist(usuario);
 
 		Optional<Usuario> us = usuarioRepository.findByEmail("erico.blp@gmail.com");
@@ -66,9 +70,7 @@ public class UsuarioRepositoryTest {
 	}
 
 	@Test
-	void deveRetornarFalsoSeNaoTiverUmUsuarioComOEmailTestado() {
-		
-		Usuario usuario = criarUsuario();
+	void deveRetornarFalsoSeNaoTiverUmUsuarioComOEmailTestado() {		
 		testEntityManager.persist(usuario);
 
 		Optional<Usuario> us = usuarioRepository.findByEmail("erico@gmail.com");
@@ -78,7 +80,7 @@ public class UsuarioRepositoryTest {
 
 	public static Usuario criarUsuario() {
 
-		Usuario usuario = Usuario.builder().nome("Erico").email("erico.blp@gmail.com").build();
+		Usuario usuario = Usuario.builder().nome("Erico").email("erico.blp@gmail.com").senha("12343").build();
 		return usuario;
 	}
 }
