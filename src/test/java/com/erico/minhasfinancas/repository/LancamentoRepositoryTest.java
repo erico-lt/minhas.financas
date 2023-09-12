@@ -54,5 +54,29 @@ public class LancamentoRepositoryTest {
         Lancamento lancamentoTest = entityManager.find(Lancamento.class, lancamento.getId());
         Assertions.assertThat(lancamentoTest).isNull();
     }
+
+    @Test
+    void deveAtualizarUmLancamentoNoBancoDeDados() {        
+
+        lancamento = entityManager.persist(lancamento);
+
+        lancamento.setDescricao("Compras");
+        lancamento.setStatus(EnumStatus.EFETIVADO); 
+        lancamentoRepository.save(lancamento);
+        Lancamento lancamentoAtualizado = entityManager.find(Lancamento.class, lancamento.getId());       
+        
+        Assertions.assertThat(lancamentoAtualizado.getId()).isEqualTo(lancamento.getId());
+        Assertions.assertThat(lancamentoAtualizado.getStatus()).isEqualTo(lancamento.getStatus());
+        Assertions.assertThat(lancamentoAtualizado.getDescricao()).isEqualTo(lancamento.getDescricao());
+    }
+
+    @Test
+    void deveRetornarUmLancamentoPorId() {
+        lancamento = entityManager.persist(lancamento);
+
+        Lancamento lancamentoTest = lancamentoRepository.getReferenceById(lancamento.getId());
+
+        Assertions.assertThat(lancamentoTest.getId()).isEqualTo(lancamento.getId());
+    }
     
 }
