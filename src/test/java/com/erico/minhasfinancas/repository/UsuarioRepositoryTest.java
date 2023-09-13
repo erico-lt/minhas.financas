@@ -59,7 +59,7 @@ public class UsuarioRepositoryTest {
 	}
 
 	@Test
-	void deveBuscarUsuarioPomOEmailTestado() {	
+	void deveBuscarUsuarioPorEmailTestado() {	
 
 
 		testEntityManager.persist(usuario);

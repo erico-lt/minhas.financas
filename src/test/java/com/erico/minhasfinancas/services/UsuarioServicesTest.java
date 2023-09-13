@@ -87,8 +87,7 @@ public class UsuarioServicesTest {
         ErroAutenticacaoException e = assertThrows(ErroAutenticacaoException.class, () -> {
             Mockito.when(usuarioRepository.findByEmail(usuario.getEmail())).thenReturn(Optional.of(usuario));
 
-            usuarioServices.autenticar("2email@email.com", usuario.getSenha());
-        
+            usuarioServices.autenticar("2email@email.com", usuario.getSenha());        
         });
 
         Assertions.assertThat(e.getMessage()).isEqualTo("Usuario nao encontrado com email informado esta incorreto");
@@ -107,7 +106,7 @@ public class UsuarioServicesTest {
     }
 
     @Test
-    void validarEmailNãoDeveContemEmailNoBanco() {
+    void deveValidarEmailParaQueNãoTenhaDoismEmailsIguaisNoBanco() {
 
         assertDoesNotThrow(() -> {
             Mockito.when(usuarioRepository.existsByEmail(Mockito.anyString())).thenReturn(false);

@@ -24,100 +24,98 @@ import com.erico.minhasfinancas.services.LancamentoServices;
 import jakarta.transaction.Transactional;
 
 @Service
-public class LancamentoServicesImpl implements LancamentoServices{
+public class LancamentoServicesImpl implements LancamentoServices {
 
     @Autowired
-    private LancamentoRepository lancamentoRepository;    
+    private LancamentoRepository lancamentoRepository;
 
     @Override
     @Transactional
-    public Lancamento salvar(Lancamento lancamento) { 
+    public Lancamento salvar(Lancamento lancamento) {
 
         validar(lancamento);
-        if(lancamento.getData_cadastro() == null) {
-            lancamento.setData_cadastro(Instant.now());
-        }
-        
-        if(lancamento.getStatus() == null) {
-            lancamento.setStatus(EnumStatus.PENDENTE);
-        }
-        
-        return lancamentoRepository.save(lancamento); 
+
+        lancamento.setData_cadastro(Instant.now());
+
+        lancamento.setStatus(EnumStatus.PENDENTE);
+
+        return lancamentoRepository.save(lancamento);
     }
 
     @Override
     @Transactional
-    public Lancamento atualizar(Lancamento lancamento) { 
+    public Lancamento atualizar(Lancamento lancamento) {
 
         validar(lancamento);
-        if(lancamentoRepository.existsById(lancamento.getId())) {
+        if (lancamentoRepository.existsById(lancamento.getId())) {
             return lancamentoRepository.save(lancamento);
-        }else {
+        } else {
             throw new RegraNegocioException("Este lancamento não existe, revise os dados passados");
-        }         
+        }
     }
 
     @Override
     @Transactional
     public void deletar(Long id) {
-        
-        if(!lancamentoRepository.existsById(id)) {
+
+        if (!lancamentoRepository.existsById(id)) {
             throw new RegraNegocioException("Lancamento nao encontrado");
         }
         lancamentoRepository.deleteById(id);
     }
 
-    //Testar se precisa remover o lancamento do Example
+    // Testar se precisa remover o lancamento do Example
     @Override
-    @Transactional 
+    @Transactional
     public List<Lancamento> buscar(Lancamento lancamentoFiltro) {
 
-        Example<Lancamento> example = Example.of(lancamentoFiltro, ExampleMatcher.matching().withIgnoreCase().withStringMatcher(StringMatcher.CONTAINING));
-        
+        Example<Lancamento> example = Example.of(lancamentoFiltro,
+                ExampleMatcher.matching().withIgnoreCase().withStringMatcher(StringMatcher.CONTAINING));
+
         return lancamentoRepository.findAll(example);
     }
 
     @Override
     public Lancamento atualizarStatus(Lancamento lancamento, EnumStatus status) {
-        
-        Objects.requireNonNull(lancamento.getId());               
-        lancamento.setStatus(status);   
-        return lancamentoRepository.save(lancamento);     
-    }    
+
+        Objects.requireNonNull(lancamento.getId());
+        lancamento.setStatus(status);
+        return lancamentoRepository.save(lancamento);
+    }
 
     @Override
     public void validar(Lancamento lancamento) {
         LocalDate date = LocalDate.now();
-        if(lancamento.getDescricao() == null || lancamento.getDescricao().trim().equals("")) {
+        if (lancamento.getDescricao() == null || lancamento.getDescricao().trim().equals("")) {
             throw new ErroAutenticacaoException("Desçricão vazia");
         }
 
-        if(lancamento.getMes() < 1 || lancamento.getMes() > 12) {
+        if (lancamento.getMes() < 1 || lancamento.getMes() > 12) {
             throw new ErroAutenticacaoException("Mes do ano invalido");
         }
 
-        if(lancamento.getAno() > date.getYear() || Integer.toString(lancamento.getAno()).length() < 4) {
+        if (lancamento.getAno() > date.getYear() || Integer.toString(lancamento.getAno()).length() < 4) {
             throw new ErroAutenticacaoException("Verifique o ano infomado");
         }
 
-        if(lancamento.getValor() == null || lancamento.getValor().compareTo(BigDecimal.ZERO) < 1) {
+        if (lancamento.getValor() == null || lancamento.getValor().compareTo(BigDecimal.ZERO) < 1) {
             throw new ErroAutenticacaoException("Informe um valor valido acima de 0");
         }
 
-        if(lancamento.getUsuario() == null) {
+        if (lancamento.getUsuario() == null) {
             throw new ErroAutenticacaoException("Usuario com informações incompletas");
         }
 
-        if(lancamento.getTipo() == null) {
+        if (lancamento.getTipo() == null) {
             throw new ErroAutenticacaoException("Tipo de lancamento não informado");
-        } 
+        }
     }
 
     @Override
     public Lancamento obterPorId(Long id) {
-        
+
         Optional<Lancamento> obj = lancamentoRepository.findById(id);
-        
+
         return obj.orElseThrow(() -> new RegraNegocioException("Lancamento nao encontrado"));
     }
 
@@ -126,13 +124,13 @@ public class LancamentoServicesImpl implements LancamentoServices{
     public BigDecimal obterSaldoPorUsuario(Long id) {
 
         BigDecimal despesa = lancamentoRepository.oberSaldoPorLancamentoEUsuario(id, EnumTipo.DESPESA);
-        BigDecimal receita =  lancamentoRepository.oberSaldoPorLancamentoEUsuario(id, EnumTipo.RECEITA);
+        BigDecimal receita = lancamentoRepository.oberSaldoPorLancamentoEUsuario(id, EnumTipo.RECEITA);
 
-        if(despesa == null){
+        if (despesa == null) {
             despesa = BigDecimal.ZERO;
         }
-        
-        if(receita == null) {
+
+        if (receita == null) {
             receita = BigDecimal.ZERO;
         }
 
