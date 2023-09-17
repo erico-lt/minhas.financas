@@ -44,8 +44,7 @@ public class LancamentoResource {
     // Metodo para atualizar Lancamento
     @PutMapping(value = "/{id}")
     public ResponseEntity<Lancamento> atualizar(@PathVariable Long id, @RequestBody Lancamento lancamento) {
-
-        lancamento.setId(id);
+        
         return ResponseEntity.ok().body(lancamentoServices.atualizar(lancamento));
     }
 

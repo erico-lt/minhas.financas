@@ -45,12 +45,12 @@ public class LancamentoServicesImpl implements LancamentoServices {
     @Override
     @Transactional
     public Lancamento atualizar(Lancamento lancamento) {
-
-        validar(lancamento);
-        if (lancamentoRepository.existsById(lancamento.getId())) {
+        
+        if (lancamento.getId() != null) {
+            validar(lancamento);
             return lancamentoRepository.save(lancamento);
         } else {
-            throw new RegraNegocioException("Este lancamento não existe, revise os dados passados");
+            throw new RegraNegocioException("Id Vazio");
         }
     }
 
@@ -95,19 +95,19 @@ public class LancamentoServicesImpl implements LancamentoServices {
         }
 
         if (lancamento.getAno() > date.getYear() || Integer.toString(lancamento.getAno()).length() < 4) {
-            throw new ErroAutenticacaoException("Verifique o ano infomado");
+            throw new ErroAutenticacaoException("Ano invalido");
         }
 
         if (lancamento.getValor() == null || lancamento.getValor().compareTo(BigDecimal.ZERO) < 1) {
-            throw new ErroAutenticacaoException("Informe um valor valido acima de 0");
+            throw new ErroAutenticacaoException("Valor invalido, informe um acima de 0");
         }
 
         if (lancamento.getUsuario() == null) {
-            throw new ErroAutenticacaoException("Usuario com informações incompletas");
+            throw new ErroAutenticacaoException("Usuario com informações invalida ou incompletas");
         }
 
         if (lancamento.getTipo() == null) {
-            throw new ErroAutenticacaoException("Tipo de lancamento não informado");
+            throw new ErroAutenticacaoException("Tipo de lancamento não informado ou invalido");
         }
     }
 
