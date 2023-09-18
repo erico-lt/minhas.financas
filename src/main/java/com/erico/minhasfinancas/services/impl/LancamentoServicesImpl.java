@@ -46,7 +46,7 @@ public class LancamentoServicesImpl implements LancamentoServices {
     @Transactional
     public Lancamento atualizar(Lancamento lancamento) {
         
-        if (lancamento.getId() != null) {
+        if (lancamento.getId() != null || lancamento.getId() <= 0) {
             validar(lancamento);
             return lancamentoRepository.save(lancamento);
         } else {
@@ -58,7 +58,7 @@ public class LancamentoServicesImpl implements LancamentoServices {
     @Transactional
     public void deletar(Long id) {
 
-        if (!lancamentoRepository.existsById(id)) {
+        if (id == null || id <= 0) {
             throw new RegraNegocioException("Lancamento nao encontrado");
         }
         lancamentoRepository.deleteById(id);

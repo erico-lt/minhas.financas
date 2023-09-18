@@ -84,4 +84,23 @@ public class LancamentoServiceTest {
 
         Assertions.assertThat(e.getMessage()).isEqualTo("Id Vazio");
     }
+
+    @Test
+    void deveDeletarUmLancamentoNoBancoDeDados() {     
+
+        lancamentoServices.deletar(1L);
+
+        Mockito.verify(lancamentoRepository, Mockito.times(1)).deleteById(1L);
+    }
+
+     @Test
+    void deveLancarUmaExcecaoQuandoTentarDeletarUmLancamento() {     
+        RegraNegocioException e = assertThrows(RegraNegocioException.class, () -> {
+            lancamentoServices.deletar(-1L);
+
+             Mockito.verify(lancamentoRepository, Mockito.never()).deleteById(1L);
+        });
+        
+        Assertions.assertThat(e.getMessage()).isEqualTo("Lancamento nao encontrado");
+    }
 }
