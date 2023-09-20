@@ -4,6 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.data.domain.Example;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
@@ -36,7 +40,7 @@ public class LancamentoServiceTest {
 
     @BeforeEach
     void criarLancamento() {
-        lancamento = Lancamento.builder().descricao("teste").mes(1).ano(2023)
+        lancamento = Lancamento.builder().descricao("Pagamento do aluguel").mes(1).ano(2023)
                 .valor(BigDecimal.valueOf(100)).tipo(EnumTipo.RECEITA).status(EnumStatus.PENDENTE)
                 .data_cadastro(Instant.now()).build();
     }
@@ -77,7 +81,7 @@ public class LancamentoServiceTest {
 
     @Test
     void deveLancarUmaExceptionQuandoAtualizarUmLancamento() {
-        RegraNegocioException e = assertThrows(RegraNegocioException.class, () -> {    
+        NullPointerException e = assertThrows(NullPointerException.class, () -> {    
 
             lancamentoServices.atualizar(lancamento);            
         });
@@ -93,7 +97,7 @@ public class LancamentoServiceTest {
         Mockito.verify(lancamentoRepository, Mockito.times(1)).deleteById(1L);
     }
 
-     @Test
+    @Test
     void deveLancarUmaExcecaoQuandoTentarDeletarUmLancamento() {     
         RegraNegocioException e = assertThrows(RegraNegocioException.class, () -> {
             lancamentoServices.deletar(-1L);
@@ -103,4 +107,18 @@ public class LancamentoServiceTest {
         
         Assertions.assertThat(e.getMessage()).isEqualTo("Lancamento nao encontrado");
     }
+
+    @Test     
+    void deveRetonarUmaListaDeLancamentos() {    
+
+        List<Lancamento> list = Arrays.asList(lancamento);  
+        
+        Mockito.when(lancamentoRepository.findAll(Mockito.<Example<Lancamento>>any())).thenReturn(list);   
+        
+        List<Lancamento> listVerify = new ArrayList<>();
+        listVerify = lancamentoServices.buscar(lancamento);
+
+        Assertions.assertThat(listVerify).hasSize(1).isNotNull().contains(lancamento);
+    }
+
 }

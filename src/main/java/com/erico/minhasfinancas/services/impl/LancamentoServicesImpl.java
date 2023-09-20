@@ -46,11 +46,13 @@ public class LancamentoServicesImpl implements LancamentoServices {
     @Transactional
     public Lancamento atualizar(Lancamento lancamento) {
         
-        if (lancamento.getId() != null || lancamento.getId() <= 0) {
+        try {
+            Objects.requireNonNull(lancamento.getId());
             validar(lancamento);
             return lancamentoRepository.save(lancamento);
-        } else {
-            throw new RegraNegocioException("Id Vazio");
+
+        } catch (NullPointerException e) {
+            throw new NullPointerException("Id Vazio");
         }
     }
 
@@ -64,7 +66,6 @@ public class LancamentoServicesImpl implements LancamentoServices {
         lancamentoRepository.deleteById(id);
     }
 
-    // Testar se precisa remover o lancamento do Example
     @Override
     @Transactional
     public List<Lancamento> buscar(Lancamento lancamentoFiltro) {
