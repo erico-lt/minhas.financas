@@ -58,12 +58,12 @@ public class LancamentoServicesImpl implements LancamentoServices {
 
     @Override
     @Transactional
-    public void deletar(Long id) {
+    public void deletar(Lancamento lancamento) {
 
-        if (id == null || id <= 0) {
+        if (lancamento.getId() == null || lancamento.getId() <= 0) {
             throw new RegraNegocioException("Lancamento nao encontrado");
         }
-        lancamentoRepository.deleteById(id);
+        lancamentoRepository.deleteById(lancamento.getId());
     }
 
     @Override

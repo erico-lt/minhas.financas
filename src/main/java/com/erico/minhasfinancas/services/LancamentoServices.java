@@ -12,7 +12,7 @@ public interface LancamentoServices {
 
     abstract Lancamento atualizar(Lancamento lancamento);
     
-    abstract void deletar(Long id);
+    abstract void deletar(Lancamento lancamento);
 
     abstract List<Lancamento> buscar(Lancamento lancamentoFiltro);
     

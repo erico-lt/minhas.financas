@@ -52,7 +52,7 @@ public class LancamentoResource {
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
 
-        lancamentoServices.deletar(id);
+        lancamentoServices.deletar(lancamentoServices.obterPorId(id));
         return ResponseEntity.noContent().build();
     }
 

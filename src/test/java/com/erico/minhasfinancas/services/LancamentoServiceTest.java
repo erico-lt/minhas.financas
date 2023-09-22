@@ -92,17 +92,19 @@ public class LancamentoServiceTest {
     @Test
     void deveDeletarUmLancamentoNoBancoDeDados() {     
 
-        lancamentoServices.deletar(1L);
+        lancamento.setId(1L);
+        lancamentoServices.deletar(lancamento);
 
-        Mockito.verify(lancamentoRepository, Mockito.times(1)).deleteById(1L);
+        Mockito.verify(lancamentoRepository, Mockito.times(1)).deleteById(lancamento.getId());
     }
 
     @Test
     void deveLancarUmaExcecaoQuandoTentarDeletarUmLancamento() {     
-        RegraNegocioException e = assertThrows(RegraNegocioException.class, () -> {
-            lancamentoServices.deletar(-1L);
+        RegraNegocioException e = assertThrows(RegraNegocioException.class, () -> {                 
+            
+            lancamentoServices.deletar(lancamento);
 
-             Mockito.verify(lancamentoRepository, Mockito.never()).deleteById(1L);
+            Mockito.verify(lancamentoRepository, Mockito.never()).deleteById(lancamento.getId());
         });
         
         Assertions.assertThat(e.getMessage()).isEqualTo("Lancamento nao encontrado");
@@ -119,6 +121,26 @@ public class LancamentoServiceTest {
         listVerify = lancamentoServices.buscar(lancamento);
 
         Assertions.assertThat(listVerify).hasSize(1).isNotNull().contains(lancamento);
+    }
+
+    @Test
+    void deveAtualizarOStatusDeUmLancamento() {
+        lancamento.setId(1L);
+
+        lancamentoServices.atualizarStatus(lancamento, EnumStatus.EFETIVADO);
+
+        Mockito.verify(lancamentoRepository, Mockito.times(1)).save(lancamento);
+        Assertions.assertThat(lancamento.getStatus()).isEqualTo(EnumStatus.EFETIVADO);
+    }
+
+    @Test
+    void deveLancarUmaExcecaoQuandoTentarMudarStatusDeUmLancamento() {
+        NullPointerException e = assertThrows(NullPointerException.class, () -> {
+            lancamentoServices.atualizarStatus(lancamento, EnumStatus.EFETIVADO);
+            Mockito.verify(lancamentoRepository, Mockito.never()).save(lancamento);
+        });
+
+        Assertions.assertThat(e.getStackTrace()).isNotEmpty();
     }
 
 }
