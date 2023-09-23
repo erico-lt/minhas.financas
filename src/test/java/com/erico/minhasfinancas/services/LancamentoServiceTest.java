@@ -7,6 +7,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -81,16 +82,16 @@ public class LancamentoServiceTest {
 
     @Test
     void deveLancarUmaExceptionQuandoAtualizarUmLancamento() {
-        NullPointerException e = assertThrows(NullPointerException.class, () -> {    
+        NullPointerException e = assertThrows(NullPointerException.class, () -> {
 
-            lancamentoServices.atualizar(lancamento);            
+            lancamentoServices.atualizar(lancamento);
         });
 
         Assertions.assertThat(e.getMessage()).isEqualTo("Id Vazio");
     }
 
     @Test
-    void deveDeletarUmLancamentoNoBancoDeDados() {     
+    void deveDeletarUmLancamentoNoBancoDeDados() {
 
         lancamento.setId(1L);
         lancamentoServices.deletar(lancamento);
@@ -99,24 +100,24 @@ public class LancamentoServiceTest {
     }
 
     @Test
-    void deveLancarUmaExcecaoQuandoTentarDeletarUmLancamento() {     
-        RegraNegocioException e = assertThrows(RegraNegocioException.class, () -> {                 
-            
+    void deveLancarUmaExcecaoQuandoTentarDeletarUmLancamento() {
+        RegraNegocioException e = assertThrows(RegraNegocioException.class, () -> {
+
             lancamentoServices.deletar(lancamento);
 
             Mockito.verify(lancamentoRepository, Mockito.never()).deleteById(lancamento.getId());
         });
-        
+
         Assertions.assertThat(e.getMessage()).isEqualTo("Lancamento nao encontrado");
     }
 
-    @Test     
-    void deveRetonarUmaListaDeLancamentos() {    
+    @Test
+    void deveRetonarUmaListaDeLancamentos() {
 
-        List<Lancamento> list = Arrays.asList(lancamento);  
-        
-        Mockito.when(lancamentoRepository.findAll(Mockito.<Example<Lancamento>>any())).thenReturn(list);   
-        
+        List<Lancamento> list = Arrays.asList(lancamento);
+
+        Mockito.when(lancamentoRepository.findAll(Mockito.<Example<Lancamento>>any())).thenReturn(list);
+
         List<Lancamento> listVerify = new ArrayList<>();
         listVerify = lancamentoServices.buscar(lancamento);
 
@@ -141,6 +142,52 @@ public class LancamentoServiceTest {
         });
 
         Assertions.assertThat(e.getStackTrace()).isNotEmpty();
+    }
+
+    @Test
+    void naoDeveLancarUmaExcecaoQuandoValidarUmLancamento() {
+        Mockito.doNothing().when(lancamentoServices).validar(lancamento);
+
+        lancamentoServices.validar(lancamento);
+    }
+
+    @Test
+    void deveLancarUmaExcecaoAoValidarLancamento() {
+        ErroAutenticacaoException e = assertThrows(ErroAutenticacaoException.class, () -> {
+            lancamento.setDescricao("");
+            lancamentoServices.validar(lancamento);
+        });
+
+        Assertions.assertThat(e.getMessage()).isNotNull();
+    }
+
+    @Test
+    void deveRetornarUmLancamentoPassandoSeuId() {
+        lancamento.setId(1L);
+        Mockito.when(lancamentoRepository.findById(Mockito.any(Long.class))).thenReturn(Optional.of(lancamento));
+
+        Lancamento test = lancamentoServices.obterPorId(1L);
+
+        Assertions.assertThat(test.getId()).isEqualTo(lancamento.getId());
+        Assertions.assertThat(test.getDescricao()).isEqualTo(lancamento.getDescricao());
+        Assertions.assertThat(test.getMes()).isEqualTo(lancamento.getMes());
+        Assertions.assertThat(test.getAno()).isEqualTo(lancamento.getAno());
+
+    }
+
+    @Test
+    void deveLancarUmaExcecaoAoTentarBuscarPorId() {
+        RegraNegocioException e = assertThrows(RegraNegocioException.class, () -> {
+            lancamento.setId(1L);            
+
+            Lancamento test = lancamentoServices.obterPorId(2L);  
+
+            
+            Assertions.assertThat(test.getId()).isNotEqualTo(lancamento.getId());
+            Assertions.assertThat(test.getDescricao()).isNotEqualTo(lancamento.getDescricao());         
+        });
+
+        Assertions.assertThat(e.getMessage()).isEqualTo("Lancamento nao encontrado");
     }
 
 }
