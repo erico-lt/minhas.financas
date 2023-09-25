@@ -77,11 +77,9 @@ public class LancamentoServicesImpl implements LancamentoServices {
     }
 
     @Override
-    public Lancamento atualizarStatus(Lancamento lancamento, EnumStatus status) {
-
-        Objects.requireNonNull(lancamento.getId());
+    public void atualizarStatus(Lancamento lancamento, EnumStatus status) {
         lancamento.setStatus(status);
-        return lancamentoRepository.save(lancamento);
+        atualizar(lancamento);
     }
 
     @Override

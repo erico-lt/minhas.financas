@@ -16,7 +16,7 @@ public interface LancamentoServices {
 
     abstract List<Lancamento> buscar(Lancamento lancamentoFiltro);
     
-    abstract Lancamento atualizarStatus(Lancamento lancamento, EnumStatus status);
+    abstract void atualizarStatus(Lancamento lancamento, EnumStatus status);
 
     abstract void validar(Lancamento lancamento);    
 
