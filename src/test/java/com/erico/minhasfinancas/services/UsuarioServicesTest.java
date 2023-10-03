@@ -16,10 +16,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import com.erico.minhasfinancas.entites.Usuario;
-import com.erico.minhasfinancas.exceptions.ErroAutenticacaoException;
-import com.erico.minhasfinancas.exceptions.RegraNegocioException;
 import com.erico.minhasfinancas.repositorys.UsuarioRepository;
 import com.erico.minhasfinancas.services.impl.UsuarioServicesImpl;
+import com.erico.minhasfinancas.services.impl.exceptions.RegraNegocioException;
 
 @ActiveProfiles("test")
 @SpringJUnitConfig
@@ -84,7 +83,7 @@ public class UsuarioServicesTest {
 
     @Test
     void testeDeveRetornarUmaExcecaoSeAutenticacaoNaoEncontrarUsuarioComEmailInformado() {
-        ErroAutenticacaoException e = assertThrows(ErroAutenticacaoException.class, () -> {
+        RegraNegocioException e = assertThrows(RegraNegocioException.class, () -> {
             Mockito.when(usuarioRepository.findByEmail(usuario.getEmail())).thenReturn(Optional.of(usuario));
 
             usuarioServices.autenticar("2email@email.com", usuario.getSenha());        
@@ -95,7 +94,7 @@ public class UsuarioServicesTest {
 
     @Test
     void testeDeveRetornarUmaExcecaoSeAutenticacaoFalharQuandoSenhaNaoEstiverCorreto() {
-        ErroAutenticacaoException e = assertThrows(ErroAutenticacaoException.class, () -> {
+        RegraNegocioException e = assertThrows(RegraNegocioException.class, () -> {
 
             Mockito.when(usuarioRepository.findByEmail(usuario.getEmail())).thenReturn(Optional.of(usuario));
 

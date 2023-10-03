@@ -46,6 +46,7 @@ public class Usuario implements Serializable{
     private String email;
 
     @NonNull
+    @JsonIgnore
     private String senha;     
    
     @OneToMany(mappedBy = "usuario")

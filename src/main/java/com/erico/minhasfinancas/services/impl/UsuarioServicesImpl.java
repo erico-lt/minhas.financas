@@ -1,3 +1,4 @@
+
 package com.erico.minhasfinancas.services.impl;
 
 import java.util.Optional;
@@ -6,10 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.erico.minhasfinancas.entites.Usuario;
-import com.erico.minhasfinancas.exceptions.ErroAutenticacaoException;
-import com.erico.minhasfinancas.exceptions.RegraNegocioException;
 import com.erico.minhasfinancas.repositorys.UsuarioRepository;
 import com.erico.minhasfinancas.services.UsuarioServices;
+import com.erico.minhasfinancas.services.impl.exceptions.RecursoNaoEncontradoException;
+import com.erico.minhasfinancas.services.impl.exceptions.RegraNegocioException;
 
 import jakarta.transaction.Transactional;
 
@@ -24,7 +25,7 @@ public class UsuarioServicesImpl implements UsuarioServices {
 
         Optional<Usuario> obj = usuarioRepository.findById(id);
 
-        return obj.orElseThrow(() -> new RegraNegocioException("Usuario nao encontrado com o id informado"));
+        return obj.orElseThrow(() -> new RecursoNaoEncontradoException(id));
     }
 
     @Override
@@ -32,11 +33,11 @@ public class UsuarioServicesImpl implements UsuarioServices {
         Optional<Usuario> user = usuarioRepository.findByEmail(email);
 
         if (!user.isPresent()) {
-            throw new ErroAutenticacaoException("Usuario nao encontrado com email informado esta incorreto");
+            throw new RegraNegocioException("Usuario nao encontrado com email informado esta incorreto");
         }
 
         if (!user.get().getSenha().equals(senha)) {
-            throw new ErroAutenticacaoException("Senha incorreta");
+            throw new RegraNegocioException("Senha incorreta");
         }
 
         return user.get();

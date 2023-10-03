@@ -23,10 +23,9 @@ import com.erico.minhasfinancas.entites.Lancamento;
 import com.erico.minhasfinancas.entites.Usuario;
 import com.erico.minhasfinancas.enums.EnumStatus;
 import com.erico.minhasfinancas.enums.EnumTipo;
-import com.erico.minhasfinancas.exceptions.ErroAutenticacaoException;
-import com.erico.minhasfinancas.exceptions.RegraNegocioException;
 import com.erico.minhasfinancas.repositorys.LancamentoRepository;
 import com.erico.minhasfinancas.services.impl.LancamentoServicesImpl;
+import com.erico.minhasfinancas.services.impl.exceptions.RegraNegocioException;
 
 @ActiveProfiles("test")
 @SpringJUnitConfig
@@ -63,7 +62,7 @@ public class LancamentoServiceTest {
 
     @Test
     void deveRetornarUmaExcecaoCasoValidarcaoFalhar() {
-        ErroAutenticacaoException e = assertThrows(ErroAutenticacaoException.class, () -> {
+        RegraNegocioException e = assertThrows(RegraNegocioException.class, () -> {
 
             lancamentoServices.validar(lancamento);
         });
@@ -157,55 +156,55 @@ public class LancamentoServiceTest {
     void deveLancarUmaExcecaoAoValidarLancamento() {
         // Teste Para testar descricão
         lancamento.setDescricao(null);
-        ErroAutenticacaoException descricao = assertThrows(ErroAutenticacaoException.class, () -> {
+        Throwable test = assertThrows(RegraNegocioException.class, () -> {
             
             lancamentoServices.validar(lancamento);
         });
-        Assertions.assertThat(descricao.getMessage()).isEqualTo("Desçricão vazia");
+        Assertions.assertThat(test.getMessage()).isEqualTo("Desçricão vazia");
         lancamento.setDescricao("Pagamento");
 
         // Teste para testar mês
         lancamento.setMes(-1);
-        ErroAutenticacaoException mes = assertThrows(ErroAutenticacaoException.class, () -> {
-
+        test = assertThrows(RegraNegocioException.class, () -> {
+        
             lancamentoServices.validar(lancamento);
         });
-        Assertions.assertThat(mes.getMessage()).isEqualTo("Mes do ano invalido");
+        Assertions.assertThat(test.getMessage()).isEqualTo("Mes do ano invalido");
         lancamento.setMes(1);
 
         // Test para testar Ano
         lancamento.setAno(2024);
-        ErroAutenticacaoException ano = assertThrows(ErroAutenticacaoException.class, () -> {
+        test = assertThrows(RegraNegocioException.class, () -> {
 
             lancamentoServices.validar(lancamento);
         });
-        Assertions.assertThat(ano.getMessage()).isEqualTo("Ano invalido");
+        Assertions.assertThat(test.getMessage()).isEqualTo("Ano invalido");
         lancamento.setAno(2023);
 
         // Teste para testar Valor
         lancamento.setValor(BigDecimal.valueOf(0));
-        ErroAutenticacaoException valor = assertThrows(ErroAutenticacaoException.class, () -> {
+        test = assertThrows(RegraNegocioException.class, () -> {
 
             lancamentoServices.validar(lancamento);
         });
-        Assertions.assertThat(valor.getMessage()).isEqualTo("Valor invalido, informe um acima de 0");
+        Assertions.assertThat(test.getMessage()).isEqualTo("Valor invalido, informe um acima de 0");
         lancamento.setValor(BigDecimal.valueOf(5));
 
         // Teste para testar Usuario do lancament
-        ErroAutenticacaoException usuario = assertThrows(ErroAutenticacaoException.class, () -> {
+        test = assertThrows(RegraNegocioException.class, () -> {
 
             lancamentoServices.validar(lancamento);
         });
-        Assertions.assertThat(usuario.getMessage()).isEqualTo("Usuario com informações invalida ou incompletas");
+        Assertions.assertThat(test.getMessage()).isEqualTo("Usuario com informações invalida ou incompletas");
         lancamento.setUsuario(new Usuario());
 
         // Teste para Testar tipo
         lancamento.setTipo(null);
-        ErroAutenticacaoException tipo = assertThrows(ErroAutenticacaoException.class, () -> {
+        test = assertThrows(RegraNegocioException.class, () -> {
 
             lancamentoServices.validar(lancamento);
         });
-        Assertions.assertThat(tipo.getMessage()).isEqualTo("Tipo de lancamento não informado ou invalido");
+        Assertions.assertThat(test.getMessage()).isEqualTo("Tipo de lancamento não informado ou invalido");
     }
 
     @Test

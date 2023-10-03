@@ -16,10 +16,10 @@ import org.springframework.stereotype.Service;
 import com.erico.minhasfinancas.entites.Lancamento;
 import com.erico.minhasfinancas.enums.EnumStatus;
 import com.erico.minhasfinancas.enums.EnumTipo;
-import com.erico.minhasfinancas.exceptions.ErroAutenticacaoException;
-import com.erico.minhasfinancas.exceptions.RegraNegocioException;
 import com.erico.minhasfinancas.repositorys.LancamentoRepository;
 import com.erico.minhasfinancas.services.LancamentoServices;
+import com.erico.minhasfinancas.services.impl.exceptions.RecursoNaoEncontradoException;
+import com.erico.minhasfinancas.services.impl.exceptions.RegraNegocioException;
 
 import jakarta.transaction.Transactional;
 
@@ -61,7 +61,7 @@ public class LancamentoServicesImpl implements LancamentoServices {
     public void deletar(Lancamento lancamento) {
 
         if (lancamento.getId() == null || lancamento.getId() <= 0) {
-            throw new RegraNegocioException("Lancamento nao encontrado");
+            throw new RecursoNaoEncontradoException(lancamento.getId());
         }
         lancamentoRepository.deleteById(lancamento.getId());
     }
@@ -86,27 +86,27 @@ public class LancamentoServicesImpl implements LancamentoServices {
     public void validar(Lancamento lancamento) {
         LocalDate date = LocalDate.now();
         if (lancamento.getDescricao() == null || lancamento.getDescricao().trim().equals("")) {
-            throw new ErroAutenticacaoException("Desçricão vazia");
+            throw new RegraNegocioException("Desçricão vazia");
         }
 
         if (lancamento.getMes() < 1 || lancamento.getMes() > 12) {
-            throw new ErroAutenticacaoException("Mes do ano invalido");
+            throw new RegraNegocioException("Mes do ano invalido");
         }
 
         if (lancamento.getAno() > date.getYear() || Integer.toString(lancamento.getAno()).length() < 4) {
-            throw new ErroAutenticacaoException("Ano invalido");
+            throw new RegraNegocioException("Ano invalido");
         }
 
         if (lancamento.getValor() == null || lancamento.getValor().compareTo(BigDecimal.ZERO) < 1) {
-            throw new ErroAutenticacaoException("Valor invalido, informe um acima de 0");
+            throw new RegraNegocioException("Valor invalido, informe um acima de 0");
         }
 
         if (lancamento.getUsuario() == null) {
-            throw new ErroAutenticacaoException("Usuario com informações invalida ou incompletas");
+            throw new RegraNegocioException("Usuario com informações invalida ou incompletas");
         }
 
         if (lancamento.getTipo() == null) {
-            throw new ErroAutenticacaoException("Tipo de lancamento não informado ou invalido");
+            throw new RegraNegocioException("Tipo de lancamento não informado ou invalido");
         }
     }
 
@@ -115,15 +115,15 @@ public class LancamentoServicesImpl implements LancamentoServices {
 
         Optional<Lancamento> obj = lancamentoRepository.findById(id);
 
-        return obj.orElseThrow(() -> new RegraNegocioException("Lancamento nao encontrado"));
+        return obj.orElseThrow(() -> new RecursoNaoEncontradoException(id));
     }
 
     @Override
     @Transactional
     public BigDecimal obterSaldoPorUsuario(Long id) {
 
-        BigDecimal despesa = lancamentoRepository.oberSaldoPorLancamentoEUsuario(id, EnumTipo.DESPESA);
-        BigDecimal receita = lancamentoRepository.oberSaldoPorLancamentoEUsuario(id, EnumTipo.RECEITA);
+        BigDecimal despesa = lancamentoRepository.oberSaldoPorUsuario(id, EnumTipo.DESPESA);
+        BigDecimal receita = lancamentoRepository.oberSaldoPorUsuario(id, EnumTipo.RECEITA);
 
         if (despesa == null) {
             despesa = BigDecimal.ZERO;

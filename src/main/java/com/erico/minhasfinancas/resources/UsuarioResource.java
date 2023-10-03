@@ -13,36 +13,36 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.erico.minhasfinancas.dto.UsuarioDTO;
 import com.erico.minhasfinancas.entites.Usuario;
-import com.erico.minhasfinancas.services.impl.LancamentoServicesImpl;
-import com.erico.minhasfinancas.services.impl.UsuarioServicesImpl;
+import com.erico.minhasfinancas.services.LancamentoServices;
+import com.erico.minhasfinancas.services.UsuarioServices;
 
 @RestController
 @RequestMapping(value = "/api/usuarios")
 public class UsuarioResource {
     
     @Autowired
-    private UsuarioServicesImpl usuarioServicesImpl;
+    private UsuarioServices usuarioServices;
 
     @Autowired
-    private LancamentoServicesImpl lancamentoServicesImpl;
+    private LancamentoServices lancamentoServices;
+
+    @PostMapping(value = "/autenticar")
+    public ResponseEntity<Usuario> autenticar(@RequestBody UsuarioDTO dto) {
+
+        return ResponseEntity.ok().body(usuarioServices.autenticar(dto.getEmail(), dto.getSenha()));
+    }
 
     @PostMapping
     public ResponseEntity<Usuario> salvarUsuario(@RequestBody UsuarioDTO dto) {
         
         Usuario user = Usuario.builder().nome(dto.getNome()).email(dto.getEmail()).senha(dto.getSenha()).build();   
-        return ResponseEntity.ok().body(usuarioServicesImpl.salvarUsuario(user)); 
-    }
-
-    @GetMapping(value = "/autenticar")
-    public ResponseEntity<Usuario> autenticar(@RequestBody UsuarioDTO dto) {
-
-        return ResponseEntity.ok().body(usuarioServicesImpl.autenticar(dto.getEmail(), dto.getSenha()));
-    }   
+        return ResponseEntity.ok().body(usuarioServices.salvarUsuario(user)); 
+    }       
 
     @GetMapping("/{id}/saldo")
     public ResponseEntity<BigDecimal> obterSaldoUsuario(@PathVariable Long id) {
         
-        usuarioServicesImpl.obterPorId(id);
-        return ResponseEntity.ok(lancamentoServicesImpl.obterSaldoPorUsuario(id));
+        usuarioServices.obterPorId(id);
+        return ResponseEntity.ok(lancamentoServices.obterSaldoPorUsuario(id));
     }
 } 
