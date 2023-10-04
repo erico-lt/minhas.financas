@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.erico.minhasfinancas.services.impl.exceptions.RecursoNaoEncontradoException;
+import com.erico.minhasfinancas.services.impl.exceptions.RegraNegocioException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -19,6 +20,17 @@ public class RecursoManipuladorException {
         String error = "Recurso nao encontrado";
         HttpStatus status = HttpStatus.NOT_FOUND;
 
+        PadraoErro err = new PadraoErro(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
+
+        return ResponseEntity.status(status).body(err);
+    }
+
+    @ExceptionHandler(RegraNegocioException.class)
+    public ResponseEntity<PadraoErro> divergenciaDeDados(RegraNegocioException e, HttpServletRequest request) {
+        
+        String error = "Divergencia de  dados";
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        
         PadraoErro err = new PadraoErro(Instant.now(), status.value(), error, e.getMessage(), request.getRequestURI());
 
         return ResponseEntity.status(status).body(err);

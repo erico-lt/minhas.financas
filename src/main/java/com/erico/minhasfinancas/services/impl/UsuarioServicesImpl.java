@@ -33,7 +33,7 @@ public class UsuarioServicesImpl implements UsuarioServices {
         Optional<Usuario> user = usuarioRepository.findByEmail(email);
 
         if (!user.isPresent()) {
-            throw new RegraNegocioException("Usuario nao encontrado com email informado esta incorreto");
+            throw new RegraNegocioException("Usuario nao encontrado, verifique se o email informado esta correto");
         }
 
         if (!user.get().getSenha().equals(senha)) {
