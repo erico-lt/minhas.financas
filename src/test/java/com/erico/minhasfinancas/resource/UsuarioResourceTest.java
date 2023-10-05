@@ -80,9 +80,24 @@ public class UsuarioResourceTest {
 
         mvc.perform(request).andExpect(MockMvcResultMatchers.status().isNotFound());                 
     }
+    
+    @Test
+    void deveCriarUmUsuarioNoBancoDeDados() throws Exception{             
+
+        Mockito.when(usuarioServices.salvarUsuario(Mockito.any(Usuario.class))).thenReturn(usuarioSalvo);
+
+        String json = new ObjectMapper().writeValueAsString(usuarioDTO);     
+         
+        MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post(API).accept(JSON).contentType(JSON).content(json);
+
+        mvc.perform(request).andExpect(MockMvcResultMatchers.status().isCreated())
+        .andExpect(MockMvcResultMatchers.jsonPath("id").value(usuarioSalvo.getId()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nome").value(usuarioSalvo.getNome()))
+        .andExpect(MockMvcResultMatchers.jsonPath("email").value(usuarioSalvo.getEmail()));             
+    }
 
     @Test
-    void deveCriarUmUsuarioNoBancoDeDados() throws Exception{
+    void deveLancarUmaExcecaoAoTentarCriarUmUsuario() throws Exception{
        
         Mockito.when(usuarioServices.salvarUsuario(Mockito.any(Usuario.class))).thenThrow(RegraNegocioException.class);
 

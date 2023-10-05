@@ -3,7 +3,7 @@ package com.erico.minhasfinancas.resources;
 import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -37,7 +37,7 @@ public class UsuarioResource {
     public ResponseEntity<Usuario> salvarUsuario(@RequestBody UsuarioDTO dto) {
         
         Usuario user = Usuario.builder().nome(dto.getNome()).email(dto.getEmail()).senha(dto.getSenha()).build();   
-        return ResponseEntity.status(HttpStatusCode.valueOf(201)).body(usuarioServices.salvarUsuario(user)); 
+        return ResponseEntity.status(HttpStatus.CREATED).body(usuarioServices.salvarUsuario(user)); 
     }       
 
     @GetMapping("/{id}/saldo")
