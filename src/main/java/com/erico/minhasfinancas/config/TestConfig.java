@@ -6,7 +6,6 @@ import java.time.Instant;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import com.erico.minhasfinancas.entites.Lancamento;
@@ -19,7 +18,6 @@ import com.erico.minhasfinancas.repositorys.UsuarioRepository;
 
 
 
-@Configuration
 @Profile("test")
 public class TestConfig implements CommandLineRunner {
 
