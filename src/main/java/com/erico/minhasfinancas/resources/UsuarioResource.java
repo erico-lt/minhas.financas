@@ -27,7 +27,7 @@ public class UsuarioResource {
     @Autowired
     private LancamentoServices lancamentoServices;
 
-    @PostMapping(value = "/autenticar")
+    @GetMapping(value = "/autenticar")
     public ResponseEntity<Usuario> autenticar(@RequestBody UsuarioDTO dto) {
 
         return ResponseEntity.ok().body(usuarioServices.autenticar(dto.getEmail(), dto.getSenha()));
