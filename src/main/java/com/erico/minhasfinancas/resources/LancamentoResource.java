@@ -19,11 +19,12 @@ import com.erico.minhasfinancas.dto.LancamentoDTO;
 import com.erico.minhasfinancas.entites.Lancamento;
 import com.erico.minhasfinancas.enums.EnumStatus;
 import com.erico.minhasfinancas.enums.EnumTipo;
+import com.erico.minhasfinancas.resources.services.ConversorLancamentos;
 import com.erico.minhasfinancas.services.LancamentoServices;
 import com.erico.minhasfinancas.services.UsuarioServices;
 
 @RestController
-@RequestMapping(value = "/api/lancamentos")
+@RequestMapping(value = "/api/lancamentos/")
 public class LancamentoResource {
 
     @Autowired
@@ -32,24 +33,24 @@ public class LancamentoResource {
     @Autowired
     UsuarioServices usuarioServices;
 
-    // Metodo para salvar Lancamento
     @PostMapping
     public ResponseEntity<Lancamento> salvar(@RequestBody LancamentoDTO dto) {
 
         Lancamento lancamento = new Lancamento();
-        converterLancamentoDtoParaLancamento(lancamento, dto);
+        ConversorLancamentos.converterLancamentoDtoEmLancamento(lancamento, dto);
+        lancamento.setUsuario(usuarioServices.obterPorId(dto.getUsuario()));
         return ResponseEntity.ok().body(lancamentoServices.salvar(lancamento));
     }
 
-    // Metodo para atualizar Lancamento
-    @PutMapping(value = "/{id}")
-    public ResponseEntity<Lancamento> atualizar(@PathVariable Long id, @RequestBody Lancamento lancamento) {
-        
+    @PutMapping("/{id}")
+    public ResponseEntity<Lancamento> atualizar(@PathVariable Long id, @RequestBody LancamentoDTO dto) {
+        Lancamento lancamento = new Lancamento();
+        ConversorLancamentos.converterLancamentoDtoEmLancamento(lancamento,dto);       
+        lancamento.setUsuario(usuarioServices.obterPorId(dto.getUsuario()));
         return ResponseEntity.ok().body(lancamentoServices.atualizar(lancamento));
     }
 
-    
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
 
         lancamentoServices.deletar(lancamentoServices.obterPorId(id));
@@ -60,7 +61,7 @@ public class LancamentoResource {
     public ResponseEntity<List<Lancamento>> buscar(
             @RequestParam(value = "descricao", required = false) String descricao,
             @RequestParam(value = "mes", required = false) Integer mes,
-            @RequestParam(value = "ano", required = false) Integer ano,
+            @RequestParam(value = "ano", required = true) Integer ano,
             @RequestParam(value = "tipo", required = false) EnumTipo tipo,
             @RequestParam(value = "id_usuario", required = true) Long idUsuario) {
 
@@ -68,28 +69,26 @@ public class LancamentoResource {
         lancamentoFiltro.setDescricao(descricao);
         lancamentoFiltro.setMes(mes);
         lancamentoFiltro.setAno(ano);
+        lancamentoFiltro.setTipo(tipo);
         lancamentoFiltro.setUsuario(usuarioServices.obterPorId(idUsuario));
 
         return ResponseEntity.ok().body(lancamentoServices.buscar(lancamentoFiltro));
-    }     
+    }
 
-    @PutMapping("/{id}/atualizar-status")
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<LancamentoDTO> obterPorId(@PathVariable Long id) {
+        Lancamento lancamento = lancamentoServices.obterPorId(id);
+        LancamentoDTO lancamentoDTO = new LancamentoDTO();
+        ConversorLancamentos.converterLancamentoEmLancamentoDto(lancamento, lancamentoDTO);
+        return ResponseEntity.ok().body(lancamentoDTO);
+    }
+
+    @PutMapping(value = "/{id}/atualizar-status")
     public ResponseEntity<Lancamento> atualizaStatus(@PathVariable Long id, @RequestBody EnumStatusDTO dto) {
 
         Lancamento lanc = lancamentoServices.obterPorId(id);
         lancamentoServices.atualizarStatus(lanc, EnumStatus.valueOf(dto.getStatus()));
         return ResponseEntity.ok().body(lanc);
-    }
-
-    public void converterLancamentoDtoParaLancamento(Lancamento lancamento, LancamentoDTO dto) {
-
-        lancamento.setDescricao(dto.getDescricao());
-        lancamento.setMes(dto.getMes());
-        lancamento.setAno(dto.getAno());
-        lancamento.setValor(dto.getValor());
-        lancamento.setTipo(EnumTipo.valueOf(dto.getTipo()));
-        lancamento.setStatus(EnumStatus.valueOf(dto.getStatus()));
-        lancamento.setUsuario(usuarioServices.obterPorId(dto.getUsuario()));
-    }
+    }   
 
 }

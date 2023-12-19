@@ -71,7 +71,7 @@ public class LancamentoServicesImpl implements LancamentoServices {
     public List<Lancamento> buscar(Lancamento lancamentoFiltro) {
 
         Example<Lancamento> example = Example.of(lancamentoFiltro,
-                ExampleMatcher.matching().withIgnoreCase().withStringMatcher(StringMatcher.CONTAINING));
+            ExampleMatcher.matching().withIgnoreCase().withStringMatcher(StringMatcher.CONTAINING));
 
         return lancamentoRepository.findAll(example);
     }

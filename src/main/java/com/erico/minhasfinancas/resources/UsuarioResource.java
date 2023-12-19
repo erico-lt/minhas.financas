@@ -27,7 +27,7 @@ public class UsuarioResource {
     @Autowired
     private LancamentoServices lancamentoServices;
 
-    @GetMapping(value = "/autenticar")
+    @PostMapping(value = "/autenticar")
     public ResponseEntity<Usuario> autenticar(@RequestBody UsuarioDTO dto) {
 
         return ResponseEntity.ok().body(usuarioServices.autenticar(dto.getEmail(), dto.getSenha()));
@@ -40,7 +40,7 @@ public class UsuarioResource {
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioServices.salvarUsuario(user)); 
     }       
 
-    @GetMapping("/{id}/saldo")
+    @GetMapping(value = "/{id}/saldo")
     public ResponseEntity<BigDecimal> obterSaldoUsuario(@PathVariable Long id) {
         
         usuarioServices.obterPorId(id);

@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class LancamentoDTO {
     
+    private Long id;
     private String descricao;
     private int mes;
     private int ano;

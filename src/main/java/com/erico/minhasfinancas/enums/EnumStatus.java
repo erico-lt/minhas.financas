@@ -22,7 +22,17 @@ public enum EnumStatus {
                 return status;
             }
         }
-        throw new IllegalArgumentException("Coddigo invalido, nao existe esse tipo");
+        throw new IllegalArgumentException("Coddigo invalido, nao existe esse status");
+    }
+
+    public static int valueOfStatus(EnumStatus enumStatus) {
+
+        for(EnumStatus status: EnumStatus.values()) {
+            if(status == enumStatus) {
+                return status.getCode();
+            }
+        }
+        throw new IllegalArgumentException("status invalido, nao existe esse status");
     }
 
 }

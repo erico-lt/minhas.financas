@@ -23,6 +23,16 @@ public enum EnumTipo {
                 return tipo;
             }
         }
-        throw new IllegalArgumentException("Coddigo invalido, nao existe esse tipo");
+        throw new IllegalArgumentException("Codigo invalido, nao existe esse tipo");
+    }
+
+    public static int valueOfTipo(EnumTipo enumTipo) {
+
+        for(EnumTipo tipo: EnumTipo.values()) {
+            if(tipo == enumTipo) {
+                return tipo.getCode();
+            }
+        }
+        throw new IllegalArgumentException("Tipo invalido, nao existe esse tipo");
     }
 }
